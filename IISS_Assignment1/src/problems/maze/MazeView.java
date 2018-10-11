@@ -86,7 +86,7 @@ public class MazeView extends ProblemView{
 	@Override
 	public void setState(State currentState) {
 		this.currentState = (MazeState) currentState;
-		posHamsterPx = posImageToPx(this.currentState.position);
+		posHamsterPx = posImageToPx(this.currentState.hamsterPosition);
 		repaint();
 	}
 
@@ -103,10 +103,10 @@ public class MazeView extends ProblemView{
 			} catch (InterruptedException e) {}
 		// Otherwise, moves.
 		else	
-			moveHamsterToPosition(mazeToState.position);
+			moveHamsterToPosition(mazeToState.hamsterPosition);
 		
 		// If there is a cat, also waits one second
-		if (mazeProblem.maze.catPositions.contains(currentState.position))
+		if (mazeProblem.maze.catPositions.contains(currentState.hamsterPosition))
 		try {
 			Thread.sleep(1000);
 		} 	catch (InterruptedException e) {}		
@@ -186,7 +186,7 @@ public class MazeView extends ProblemView{
 		// Paints the cats
 		for (Position catPosition: mazeProblem.maze.catPositions) {
 			posFigurePx= posImageToPx(catPosition);
-			if (catPosition.equals(currentState.position))
+			if (catPosition.equals(currentState.hamsterPosition))
 				graphics2D.drawImage(scaledCat, posFigurePx.x, posFigurePx.y, this);	
 			else
 				graphics2D.drawImage(scaledCat2, posFigurePx.x, posFigurePx.y, this);	
