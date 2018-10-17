@@ -15,7 +15,7 @@ public class MazeState extends State implements Cloneable{
 	/** An state is includes a position given by the coordinates (x,y) */
 	public Position hamsterPosition;
 	public int cheeseCounter;
-	public int damage;
+	public double damage;
 	
 	public LinkedList<Position> eatenCheeses;
 	
@@ -32,13 +32,13 @@ public class MazeState extends State implements Cloneable{
 	}
 	
 	//Overwrite States
-	public MazeState(int x, int y, LinkedList<Position>eCheeses, int dam){
+	public MazeState(int x, int y, LinkedList<Position>eCheeses, double dam){
 		this.hamsterPosition = new Position(x,y);
 		this.eatenCheeses = eCheeses; 
 		this.cheeseCounter = eatenCheeses.size();
 		this.damage = dam;
 	}
-	public MazeState(Position initialP, LinkedList<Position>eCheeses, int dam){
+	public MazeState(Position initialP, LinkedList<Position>eCheeses, double dam){
 		this.hamsterPosition = initialP;
 		this.eatenCheeses = eCheeses; 
 		this.cheeseCounter = eatenCheeses.size();
@@ -76,4 +76,6 @@ public class MazeState extends State implements Cloneable{
 				+" Damage-> "+this.damage);
 		
 	}
+	
+	
 }

@@ -3,6 +3,7 @@ package problems.maze;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import search.State;
 import search.Action;
@@ -70,70 +71,109 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 	public State applyAction(State state, Action action) {
 		// TODO Auto-generated method stub
 
-		//Object newState = ((MazeState)state).clone();
+		
 		
 		int newX = ((MazeState)state).hamsterPosition.x;
-		int newY = ((MazeState)state).hamsterPosition.y;
-		
-		int newDamage = ((MazeState)state).damage;
-		
+		int newY = ((MazeState)state).hamsterPosition.y;		
+		double newDamage = ((MazeState)state).damage;		
+		Position newPosition = new Position(newX, newY);
 		LinkedList<Position> newEatenCheeses =  (LinkedList<Position>)((MazeState)state).eatenCheeses.clone();
 		
 		
-		//MazeState newState = new MazeState(newX, newY, newEatenCheeses, newDamage);
 		
-		switch (action.getId()) {
+		switch (((MazeAction)action).getId()) {
 
-		case "RIGHT":
+		case "RIGHT":			
+			newX +=1;	
+			if(this.maze.containsCat(newX, newY)) newDamage = PENALTY;
+			return new MazeState(newX, newY, newEatenCheeses, newDamage);
 			
-			newX +=1;
-			
-			if(this.maze.containsCheese(newX,newY)){
-			//que pasa si tieene queso (solo se checkea en EAT??)
-			}
-			
-			return
-			break;
 		case "UP":
-			newY +=1;
-			break;
+			newY -=1;
+			if(this.maze.containsCat(newX, newY)) newDamage = PENALTY;
+			return new MazeState(newX, newY, newEatenCheeses, newDamage);
+			
 		case "LEFT":
 			newX -=1;
-			break;
-		case "DOWN":
-			newY -=1;
-			break;
-		case "EAT":
+			if(this.maze.containsCat(newX, newY)) newDamage = PENALTY;
+			return new MazeState(newX, newY, newEatenCheeses, newDamage);
 			
-			break;
-
+		case "DOWN":
+			newY +=1;
+			if(this.maze.containsCat(newX, newY)) newDamage = PENALTY;
+			return new MazeState(newX, newY, newEatenCheeses, newDamage);
+			
+		case "EAT":
+			if(this.maze.containsCheese(newX, newY)) newEatenCheeses.add(newPosition);
+			return new MazeState(newX, newY, newEatenCheeses, newDamage);
+			
+		default:
+			return state;
 		}
-		return newState;
 		
 	}
 
+	/** Returns the set of actions that can be applied to a certain state */
 	@Override
 	public ArrayList<Action> getPossibleActions(State state) {
 		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Action> possibleActions = new ArrayList<>();
+		Position thisPosition = ((MazeState)state).hamsterPosition;
+		//necesito saber : si esta en un muro o en las paredes????
+		if(this.maze.containsCheese(thisPosition)){
+			possibleActions.add(MazeAction.EAT);
+		}
+		if(thisPosition.x != 0){
+			possibleActions.add(MazeAction.LEFT);
+		}
+		if(thisPosition.x != this.maze.size-1){ ///sin el menos 1???
+			possibleActions.add(MazeAction.RIGHT);
+		}
+		if(thisPosition.y != 0){
+			possibleActions.add(MazeAction.UP);
+		}
+		if(thisPosition.y != this.maze.size-1){ ///sin el menos 1???
+			possibleActions.add(MazeAction.DOWN);
+		}
+		return possibleActions;
 	}
-
+	 /** Returns the cost of applying an action over a state */
 	@Override
 	public double cost(State state, Action action) {
 		// TODO Auto-generated method stub
-		return 0;
+		//PARA QUE EL ACTION???
+		if (((MazeState)state).damage == PENALTY){
+			return  PENALTY;
+		}else{
+			return 1;
+		}
+		
 	}
 
+	/** Tests if an state is the goal */
 	@Override
 	public boolean testGoal(State chosen) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		if (((MazeState)chosen).hamsterPosition.equals(maze.output()) && ((MazeState)chosen).cheeseCounter==3){
+			return true;			
+		}else{
+			return false;
+		}
+		
 	}
 
+	/** The returns the heuristic value of an state */
 	@Override
 	public double heuristic(State state) {
 		// TODO Auto-generated method stub
-		return 0;
+		//Min number of movements from hamster position to output position
+		
+		double heuristicValue = 0;
+		double xDistance = Math.abs(((MazeState)state).hamsterPosition.x - this.maze.output().x);
+		double yDistance = Math.abs(((MazeState)state).hamsterPosition.y - this.maze.output().y);
+		heuristicValue = xDistance +yDistance;
+		
+		return heuristicValue;
 	}
 
 	// VISUALIZATION
