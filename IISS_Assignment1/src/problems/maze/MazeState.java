@@ -23,12 +23,14 @@ public class MazeState extends State implements Cloneable{
 	public MazeState(int x, int y){
 		this.hamsterPosition = new Position(x,y);
 		this.eatenCheeses = new LinkedList<>(); 
-		this.cheeseCounter = eatenCheeses.size();		
+		this.cheeseCounter = eatenCheeses.size();	
+		this.damage = 0;
 	}
 	public MazeState(Position initialP){
 		this.hamsterPosition = initialP;
 		this.eatenCheeses = new LinkedList<>(); 
-		this.cheeseCounter = eatenCheeses.size();		
+		this.cheeseCounter = eatenCheeses.size();
+		this.damage = 0;
 	}
 	
 	//Overwrite States

@@ -4,7 +4,7 @@ package utils;
  * This class is used to encapsulate pairs of (X,Y) coordinates. 
  * Makes it easier the use of some data structures, such as HashMaps or HashSets
  */
-public class Position{
+public class Position {
 	
 	/* Coordinates. For simplicity, we make them public and inmutable*/
 	public final int x;

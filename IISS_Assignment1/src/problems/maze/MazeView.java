@@ -181,6 +181,11 @@ public class MazeView extends ProblemView{
 		    //    graphics2D.drawImage(scaledHamster2, posHamsterPx.x, posHamsterPx.y, this);
 			//
 			//******************
+			
+			if (currentState.damage <= 0)
+				    graphics2D.drawImage(scaledHamster, posHamsterPx.x, posHamsterPx.y, this);
+				 else
+			      graphics2D.drawImage(scaledHamster2, posHamsterPx.x, posHamsterPx.y, this);
 		}		
 		
 		// Paints the cats
@@ -202,7 +207,13 @@ public class MazeView extends ProblemView{
 			//	graphics2D.drawImage(scaledCheese, posFigurePx.x, posFigurePx.y, this);
 			// }
 			//
-			//******************	
+			//******************
+		for (Position cheesePosition: mazeProblem.maze.cheesePositions){
+			if (!currentState.eatenCheeses.contains(cheesePosition)){
+				posFigurePx= posImageToPx(cheesePosition);
+				graphics2D.drawImage(scaledCheese, posFigurePx.x, posFigurePx.y, this);
+			}
+		}
 	}	
 	
 	
