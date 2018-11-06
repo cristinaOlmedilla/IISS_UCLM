@@ -22,7 +22,7 @@ public class BreathFirst extends SearchAlgorithm{
 		
 		Queue<Node> openNodes = new LinkedList<Node>();
 		LinkedList<State> exploredStates = new LinkedList<State>();
-		ArrayList<Node> succesors = new ArrayList<Node>();
+		//ArrayList<Node> succesors = new ArrayList<Node>();
 		
 		//we include the first Node
 		openNodes.add(initialNode);
@@ -34,8 +34,14 @@ public class BreathFirst extends SearchAlgorithm{
 			//We extract the first Node in the queue
 			
 			Node actualNode = openNodes.poll();
+			System.out.print("\n**********************************************************");
+			System.out.print("\n-----NEW NODE-----: " + actualNode+"\n");
+			
+			//System.out.println("ha pasado el poll"+ actualNode.hashCode()+actualNode.getState());
+			State actualNodeState = (State)actualNode.getState();
 			//It will be explored if the State has not been explored before
-			if (!exploredStates.contains(actualNode.getState())){
+			//if (!exploredStates.contains(actualNode.getState())){
+			if (!exploredStates.contains(actualNodeState)){
 				//We explore the Node
 				
 				//First we check if it is the Goal State
@@ -44,13 +50,21 @@ public class BreathFirst extends SearchAlgorithm{
 					solutionFound = true;
 				}else{
 					//If is not the goal we expand the Node
-					succesors.addAll(getSuccessors(actualNode));
-					openNodes.addAll(succesors);
+					//succesors.addAll(getSuccessors(actualNode));
+					//openNodes.addAll(succesors);
+					openNodes.addAll(getSuccessors(actualNode));
+					System.out.print("\nSucesores del nodo: ");
+					System.out.print("\nNodo: "+ actualNode.toString());
+					System.out.print("\nSucesores: "+ getSuccessors(actualNode).toString());
+					System.out.print("\n**********************************************************\n");
 				}
 				//We finish exploring the node, so we include it into
 				//the explored States
 				exploredStates.add(actualNode.getState());
 				
+			}else {
+				System.out.print("\nThis node has been explored already");
+				System.out.print("\n**********************************************************\n");
 			}
 		}
 		

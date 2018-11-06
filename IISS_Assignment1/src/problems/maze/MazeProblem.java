@@ -92,7 +92,7 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 			newX += 1;
 			MazeState newState1 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState1.damage = PENALTY;
+				newState1.damage += PENALTY;
 			return newState1;
 			/*newDamage = PENALTY;
 			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
@@ -101,7 +101,7 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 			newY -= 1;
 			MazeState newState2 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState2.damage = PENALTY;
+				newState2.damage += PENALTY;
 			return newState2;
 				/*newDamage = PENALTY;
 			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
@@ -110,7 +110,7 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 			newX -= 1;
 			MazeState newState3 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState3.damage = PENALTY;
+				newState3.damage += PENALTY;
 			return newState3;
 				/*newDamage = PENALTY;
 			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
@@ -119,14 +119,15 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 			newY += 1;
 			MazeState newState4 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState4.damage = PENALTY;
+				newState4.damage += PENALTY;
 			return newState4;
 				/*newDamage = PENALTY;
 			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
 
-		case "EAT":
-			newEatenCheeses.add(newPosition);
+		case "EAT":	
 			MazeState newState5 = new MazeState(newX, newY,newEatenCheeses, newDamage );
+			if(!((MazeState) state).eatenCheeses.contains(newPosition))
+				newState5.eatenCheeses.add(newPosition);
 			return newState5;
 
 		default:
@@ -143,11 +144,11 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 		Position thisPosition = ((MazeState)state).hamsterPosition;
 		Set<Position> reachablePosition = maze.reachablePositions(thisPosition);
 
-		if (this.maze.containsCheese(thisPosition)) {
+		if (this.maze.containsCheese(thisPosition)&& !((MazeState)state).eatenCheeses.contains(thisPosition)) {
 			possibleActions.add(MazeAction.EAT);
 		}
-		if(this.maze.containsCat(thisPosition)&&(((MazeState)state).damage>=PENALTY)) {
-			System.out.print("You die here, already damaged and "
+		if(this.maze.containsCat(thisPosition)&&(((MazeState)state).damage>PENALTY)) {
+			System.out.print("\nYou die here, already damaged and "
 							+ "there is a cat here\n");
 		}else {
 			for (Position position : reachablePosition) {
@@ -212,8 +213,8 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 		double distanceToTheExit;
 		int numberEatenCheeses = ((MazeState)state).cheeseCounter;
 		
-		Position actualCheesePos; 
-		Position closerCheesePos = null;
+		Position closerCheesePos = ((MazeState)state).hamsterPosition; 
+		Position actualCheesePos = null;
 		
 		Set<Position> cheesesPosition = new HashSet<Position>();
 		cheesesPosition.addAll(this.maze.cheesePositions);
@@ -239,7 +240,7 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 			if (!iterator.hasNext()) {
 				
 				//Updating the variables
-				numberEatenCheeses += 3;
+				numberEatenCheeses = 3;
 				eatenCheesesPosition.add(closerCheesePos);
 			}
 		}

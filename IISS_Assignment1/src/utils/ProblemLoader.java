@@ -12,7 +12,7 @@ public class ProblemLoader{
 	public static SearchProblem generateProblem(String problemName, String[] params){
 		try{
 			@SuppressWarnings("unchecked")
-			Class<SearchProblem> problemClass = (Class<SearchProblem>) Class.forName("problems."+problemName);
+			Class<SearchProblem> problemClass = (Class<SearchProblem>) Class.forName("problems.maze."+problemName);
 			SearchProblem problem = problemClass.newInstance();
 			problem.setParams(params);
 			return problem;

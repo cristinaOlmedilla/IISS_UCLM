@@ -52,7 +52,8 @@ public class MazeState extends State implements Cloneable{
 		// TODO Auto-generated method stub
 		MazeState aState = (MazeState)anotherState;
 		if(this.hamsterPosition.equals(aState.hamsterPosition)
-				&&this.eatenCheeses.equals(aState.eatenCheeses)
+				&&aState.eatenCheeses.containsAll(eatenCheeses)
+				//&&this.eatenCheeses.equals(aState.eatenCheeses)
 				&&this.damage==aState.damage){
 			return true;
 		}else{

@@ -32,11 +32,11 @@ public class MazeView extends ProblemView{
 	private static Color waterColor = new Color(34, 79, 189);
 	
 	// Images
-	public static final Image hamster = Toolkit.getDefaultToolkit().getImage("problems/maze/imgs/hamster.png");
-	public static final Image hamster2 = Toolkit.getDefaultToolkit().getImage("problems/maze/imgs/hamster2.png");
-	public static final Image cheese = Toolkit.getDefaultToolkit().getImage("problems/maze/imgs/queso.png");	
-	public static final Image cat = Toolkit.getDefaultToolkit().getImage("problems/maze/imgs/cat.png");
-	public static final Image cat2 = Toolkit.getDefaultToolkit().getImage("problems/maze/imgs/cat2.png");
+	public static final Image hamster = Toolkit.getDefaultToolkit().getImage("/home/olme/workspace/Lab1SSII/problems/maze/imgs/hamster.png");
+	public static final Image hamster2 = Toolkit.getDefaultToolkit().getImage("/home/olme/workspace/Lab1SSII/problems/maze/imgs/hamster2.png");
+	public static final Image cheese = Toolkit.getDefaultToolkit().getImage("/home/olme/workspace/Lab1SSII/problems/maze/imgs/queso.png");	
+	public static final Image cat = Toolkit.getDefaultToolkit().getImage("/home/olme/workspace/Lab1SSII/problems/maze/imgs/cat.png");
+	public static final Image cat2 = Toolkit.getDefaultToolkit().getImage("/home/olme/workspace/Lab1SSII/problems/maze/imgs/cat2.png");
 	// Image of the maze
 	BufferedImage mazeImage;		
 	// Scaled images
