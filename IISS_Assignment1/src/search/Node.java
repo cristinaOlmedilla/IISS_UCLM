@@ -82,7 +82,7 @@ public class Node{
 	public boolean equals(Object anotherNode){
 		// If the object is not a Node, returns false, but reports the error.
 		if (!(anotherNode instanceof Node)){
-			System.out.println("Trying to compare two objects of different classes.");
+			System.out.println("\nTrying to compare two objects of different classes.");
 			return false;
 		}
 		// If the object is a node, compares their states.
@@ -94,7 +94,7 @@ public class Node{
      *  It is simple because it is the format used by the debugger.
      */
     public String toString(){
-    	return("Node("+state.toString()+")");
+    	return("\n	Node("+state.toString()+")");
     }
     
     /** 

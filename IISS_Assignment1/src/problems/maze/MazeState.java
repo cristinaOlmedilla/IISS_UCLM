@@ -75,8 +75,8 @@ public class MazeState extends State implements Cloneable{
 	public String toString() {
 		// TODO Auto-generated method stub
 		return ("State: Position-> "+this.hamsterPosition.toString()
-				+" Eaten Cheeses-> "+this.cheeseCounter
-				+" Damage-> "+this.damage);
+				+" \n	Eaten Cheeses-> "+this.cheeseCounter
+				+" \n	Damage-> "+this.damage);
 		
 	}
 	

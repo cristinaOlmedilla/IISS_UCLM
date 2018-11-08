@@ -1,5 +1,4 @@
 package algorithms;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -8,9 +7,8 @@ import java.util.Queue;
 
 import search.*;
 
-public class AStar extends SearchAlgorithm {
+public class GreedyBestFirstImprove extends SearchAlgorithm{
 
-	// TODO Auto-generated method stub
 	@Override
 	public void setParams(String[] params) {
 		// TODO Auto-generated method stub
@@ -19,60 +17,67 @@ public class AStar extends SearchAlgorithm {
 
 	@Override
 	public void doSearch() {
+		// TODO Auto-generated method stub
 
+		// TODO Auto-generated method stub
 		State initialState = problem.initialState();
 		Node initialNode = new Node(initialState);
 
-		/*
-		 * We will order the nodes to explored depending on its evaluation. The smaller
-		 * evaluation value, the earlier this node will be explored.
-		 */
-		PriorityQueue<Node> openNodes = new PriorityQueue<Node>(search.Node.BY_EVALUATION);
+		PriorityQueue<Node> openNodes = new PriorityQueue<Node>(search.Node.BY_HEURISTIC);
 		LinkedList<State> exploredStates = new LinkedList<State>();
 
-		// We include the first Node
+		// we include the first Node
 		openNodes.add(initialNode);
 		generatedNodes++;
 
-		/*
-		 * We keep searching till finding a solution or till exploring all the possible
-		 * paths.
-		 */
+		// We keep searching till finding a solution or till exploring all
+		// the possible paths.
 		while ((openNodes.peek() != null) && !solutionFound) {
-
 			// We extract the first Node in the queue
+
 			Node actualNode = openNodes.poll();
 			System.out.print("\n");
 			System.out.print("\n****************************************************");
 			System.out.print("\nNEW NODE: " + actualNode );
 			System.out.print("\n	-------------------------------------------- ");
 
+			
 			State actualNodeState = (State) actualNode.getState();
-
 			// It will be explored if the State has not been explored before
+			
 			if (!exploredStates.contains(actualNodeState)) {
 				// We explore the Node
 
 				// First we check if it is the Goal State
 				if (problem.testGoal(actualNode.getState())) {
-					
 					actionSequence.addAll(recoverPath(actualNode));
 					solutionFound = true;
-					
 				} else {
-					
 					// If is not the goal we expand the Node
 					Queue<Node> successorNodes = new LinkedList<Node>();
 					successorNodes.addAll(getSuccessors(actualNode));
-
+					
 					System.out.print("\nSUCCESORS OF THE NODE:");
-					for (Node n : successorNodes) {
-						openNodes.add(n);
-						System.out.print("\n	Node: " + n.toString());
-						System.out.print("\n	Heuristica del nodo: " + n.getHeuristic());
-						System.out.print("\n	Evaluacion del nodo: " + n.getEvaluation());
-						System.out.print("\n	-------------------------------------------- ");
+					for (Node n: successorNodes) {
+						if  (!exploredStates.contains(n.getState())) {
+							if (!openNodes.contains(n)) {
+								openNodes.add(n);
+								System.out.print("\n	Node: " + n.toString());
+								System.out.print("\n	Heuristica del nodo: " + n.getHeuristic());
+								System.out.print("\n	Evaluacion del nodo: " + n.getEvaluation());
+								System.out.print("\n	-------------------------------------------- ");
+							
+							}else {
+								System.out.print("\n	** We DONT add a node, it is an open node:"+n);
+								System.out.print("\n	-------------------------------------------- ");
+							}
+							
+						} else {
+							System.out.print("\n	** We DONT add a node, it is an explored node:"+n);
+							System.out.print("\n	-------------------------------------------- ");
+						}
 					}
+					
 
 					System.out.print("\n****************************************************");
 					//We check for the max size of the set of openNodes
@@ -141,7 +146,7 @@ public class AStar extends SearchAlgorithm {
 		Collections.reverse(path);
 
 		return path;
-
 	}
+
 
 }

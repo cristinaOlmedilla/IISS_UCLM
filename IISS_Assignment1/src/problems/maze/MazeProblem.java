@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-
-
 import search.State;
 import search.Action;
 import search.SearchProblem;
@@ -27,7 +25,6 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 	private static final double PENALTY = 2;
 	// Infinity Value for the Heuristics
 	private static final double INFINITY = Double.POSITIVE_INFINITY;
-	
 
 	/* Maze */
 	Maze maze;
@@ -77,56 +74,63 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 	@Override
 	public State applyAction(State state, Action action) {
 		// TODO Auto-generated method stub
-
+		double newDamage = ((MazeState) state).damage;
 		int newX = ((MazeState) state).hamsterPosition.x;
 		int newY = ((MazeState) state).hamsterPosition.y;
-		double newDamage = ((MazeState) state).damage;
-		//double newDamage = 0;
-		Position newPosition = new Position(newX, newY);
-		LinkedList<Position> newEatenCheeses = (LinkedList<Position>)((MazeState) state).eatenCheeses.clone();
 
-				
+		// double newDamage = 0;
+		Position newPosition = new Position(newX, newY);
+		LinkedList<Position> newEatenCheeses = (LinkedList<Position>) ((MazeState) state).eatenCheeses.clone();
+
+		// We will update the damage if there is a cat in the actual state, to propagate
+		// it through
+		// its successors
+
 		switch (((MazeAction) action).getId()) {
 
 		case "RIGHT":
-			newX += 1;
-			MazeState newState1 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState1.damage += PENALTY;
+				newDamage += PENALTY;
+			newX += 1;
+			MazeState newState1 = new MazeState(newX, newY, newEatenCheeses, newDamage);
+			/*
+			 * if (this.maze.containsCat(newX, newY)) newState1.damage += PENALTY;
+			 */
 			return newState1;
-			/*newDamage = PENALTY;
-			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
 
 		case "UP":
-			newY -= 1;
-			MazeState newState2 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState2.damage += PENALTY;
+				newDamage += PENALTY;
+			newY -= 1;
+			MazeState newState2 = new MazeState(newX, newY, newEatenCheeses, newDamage);
+			/*
+			 * if (this.maze.containsCat(newX, newY)) newState2.damage += PENALTY;
+			 */
 			return newState2;
-				/*newDamage = PENALTY;
-			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
 
 		case "LEFT":
-			newX -= 1;
-			MazeState newState3 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState3.damage += PENALTY;
+				newDamage += PENALTY;
+			newX -= 1;
+			MazeState newState3 = new MazeState(newX, newY, newEatenCheeses, newDamage);
+			/*
+			 * if (this.maze.containsCat(newX, newY)) newState3.damage += PENALTY;
+			 */
 			return newState3;
-				/*newDamage = PENALTY;
-			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
 
 		case "DOWN":
-			newY += 1;
-			MazeState newState4 = new MazeState(newX, newY,newEatenCheeses, newDamage );
 			if (this.maze.containsCat(newX, newY))
-				newState4.damage += PENALTY;
+				newDamage += PENALTY;
+			newY += 1;
+			MazeState newState4 = new MazeState(newX, newY, newEatenCheeses, newDamage);
+			/*
+			 * if (this.maze.containsCat(newX, newY)) newState4.damage += PENALTY;
+			 */
 			return newState4;
-				/*newDamage = PENALTY;
-			return new MazeState(newX, newY, newEatenCheeses, newDamage);*/
 
-		case "EAT":	
-			MazeState newState5 = new MazeState(newX, newY,newEatenCheeses, newDamage );
-			if(!((MazeState) state).eatenCheeses.contains(newPosition))
+		case "EAT":
+			MazeState newState5 = new MazeState(newX, newY, newEatenCheeses, newDamage);
+			if (!((MazeState) state).eatenCheeses.contains(newPosition))
 				newState5.eatenCheeses.add(newPosition);
 			return newState5;
 
@@ -141,32 +145,30 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 	public ArrayList<Action> getPossibleActions(State state) {
 		// TODO Auto-generated method stub
 		ArrayList<Action> possibleActions = new ArrayList<>();
-		Position thisPosition = ((MazeState)state).hamsterPosition;
+		Position thisPosition = ((MazeState) state).hamsterPosition;
 		Set<Position> reachablePosition = maze.reachablePositions(thisPosition);
 
-		if (this.maze.containsCheese(thisPosition)&& !((MazeState)state).eatenCheeses.contains(thisPosition)) {
+		if (this.maze.containsCheese(thisPosition) && !((MazeState) state).eatenCheeses.contains(thisPosition)) {
 			possibleActions.add(MazeAction.EAT);
 		}
-		if(this.maze.containsCat(thisPosition)&&(((MazeState)state).damage>PENALTY)) {
-			System.out.print("\nYou die here, already damaged and "
-							+ "there is a cat here\n");
-		}else {
+		if (this.maze.containsCat(thisPosition) && (((MazeState) state).damage == PENALTY)) {
+			System.out.print("\n-----------------------------------------------");
+			System.out.print("\n------You would die here, you are already------");
+			System.out.print("\n------  damaged and there is a cat here  ------");
+			System.out.print("\n-----------------------------------------------\n");
+		} else {
 			for (Position position : reachablePosition) {
 
-				if ((position.x == thisPosition.x)
-						&& (position.y == thisPosition.y - 1)) {
+				if ((position.x == thisPosition.x) && (position.y == thisPosition.y - 1)) {
 					possibleActions.add(MazeAction.UP);
 				}
-				if ((position.x == thisPosition.x)
-						&& (position.y == thisPosition.y + 1)) { 
+				if ((position.x == thisPosition.x) && (position.y == thisPosition.y + 1)) {
 					possibleActions.add(MazeAction.DOWN);
 				}
-				if ((position.y == thisPosition.y)
-						&& (position.x == thisPosition.x - 1)) {
+				if ((position.y == thisPosition.y) && (position.x == thisPosition.x - 1)) {
 					possibleActions.add(MazeAction.LEFT);
 				}
-				if ((position.y == thisPosition.y)
-						&& (position.x == thisPosition.x + 1)) { 
+				if ((position.y == thisPosition.y) && (position.x == thisPosition.x + 1)) {
 					possibleActions.add(MazeAction.RIGHT);
 				}
 			}
@@ -193,8 +195,7 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 	@Override
 	public boolean testGoal(State chosen) {
 
-		if (((MazeState) chosen).hamsterPosition.equals(maze.output())
-				&& ((MazeState) chosen).cheeseCounter == 3) {
+		if (((MazeState) chosen).hamsterPosition.equals(maze.output()) && ((MazeState) chosen).cheeseCounter == 3) {
 			return true;
 		} else {
 			return false;
@@ -204,116 +205,145 @@ public class MazeProblem implements SearchProblem, ProblemVisualizable {
 
 	/** The returns the heuristic value of an state */
 	@Override
-	public double heuristic(State state) {
-		// Minimum distance from my position to the exit passing by the closest cheese position
+	public double heuristic2(State state) {
+		// Minimum distance from my position to the exit passing by the closest cheese
+		// position
 
 		double heuristicValue = 0;
 		double shortestDistance = INFINITY;
 		double distanceToNextCheese;
 		double distanceToTheExit;
-		int numberEatenCheeses = ((MazeState)state).cheeseCounter;
-		
-		Position closerCheesePos = ((MazeState)state).hamsterPosition; 
+		int numberEatenCheeses = ((MazeState) state).cheeseCounter;
+
+		Position closerCheesePos = ((MazeState) state).hamsterPosition;
 		Position actualCheesePos = null;
-		
+
 		Set<Position> cheesesPosition = new HashSet<Position>();
 		cheesesPosition.addAll(this.maze.cheesePositions);
-		
-		LinkedList<Position> eatenCheesesPosition = (LinkedList<Position>)((MazeState)state).eatenCheeses.clone();
+
+		LinkedList<Position> eatenCheesesPosition = (LinkedList<Position>) ((MazeState) state).eatenCheeses.clone();
 		Iterator<Position> iterator = cheesesPosition.iterator();
-		while (numberEatenCheeses != 3) {
-			//We target the first cheese on the list
+
+		boolean enter = true;
+		while (numberEatenCheeses != 3 && enter) {
+			// We target the first cheese on the list
 			actualCheesePos = iterator.next();
 
-			//We keeping searching if the cheese has been eaten
+			// We keeping searching if the cheese has been eaten
 			if (!eatenCheesesPosition.contains(actualCheesePos)) {
-				//Distance from HamsterPosition to the first cheese--> not eaten
+				// Distance from HamsterPosition to the first cheese--> not eaten
 				distanceToNextCheese = Math.abs(actualCheesePos.x - ((MazeState) state).hamsterPosition.x)
 						+ Math.abs(actualCheesePos.y - ((MazeState) state).hamsterPosition.y);
-				//We check whether this cheese is the closest from the hamster Position
+				// We check whether this cheese is the closest from the hamster Position
 				if (distanceToNextCheese < shortestDistance) {
 
 					shortestDistance = distanceToNextCheese;
 					closerCheesePos = actualCheesePos;
-				} 
+				}
 			}
 			if (!iterator.hasNext()) {
-				
-				//Updating the variables
-				numberEatenCheeses = 3;
+
+				// Updating the variables
+				enter = false;
 				eatenCheesesPosition.add(closerCheesePos);
 			}
 		}
-		
-		//Distance from last cheese eaten to the exit
+
+		// Distance from last cheese eaten to the exit
 		if (numberEatenCheeses == 3) {
-			
-			distanceToTheExit = Math.abs(this.maze.output().x - closerCheesePos.x)
-							  + Math.abs(this.maze.output().y - closerCheesePos.y);
-			heuristicValue = shortestDistance + distanceToTheExit;
+			// This is in case that the mouse has eaten already the 3 cheeses
+			if (shortestDistance == INFINITY) {
+				distanceToTheExit = Math.abs(this.maze.output().x - closerCheesePos.x)
+						+ Math.abs(this.maze.output().y - closerCheesePos.y);
+				heuristicValue = distanceToTheExit;
+				// This is in case that the mouse haven't eaten all cheeses yet
+			} else {
+				distanceToTheExit = Math.abs(this.maze.output().x - closerCheesePos.x)
+						+ Math.abs(this.maze.output().y - closerCheesePos.y);
+				heuristicValue = shortestDistance + distanceToTheExit;
+			}
+
 		}
 		return heuristicValue;
-		
-		/*double heuristicValue = 0;
+
+	}
+
+	public double heuristic(State state) {
+		// Minimum distance from my position to the exit passing by the closest cheese
+		// position
+
+		double heuristicValue = 0;
 		double shortestDistance = INFINITY;
 		double distanceToNextCheese;
 		double distanceToTheExit;
-		int numberEatenCheeses = ((MazeState)state).cheeseCounter;
-		
-		Position actualCheesePos; 
-		Position myPosition;
+		int numberEatenCheeses = ((MazeState) state).cheeseCounter;
+
+		// We need the position that the hamster will theoretically arrive to,
+		// and the position of the cheese that is closer to the hamster position
+		// (the one we change for the heuristics)
 		Position closerCheesePos = null;
-		
+		// Position actualCheesePos = null;
+		Position hamsPosition = ((MazeState) state).hamsterPosition;
+
+		// we will use this List to retrieve the actual cheeses that have been eaten
+		// and the ones that we will introduce as the closest to the hamster position
+		LinkedList<Position> eatenCheesesPosition = (LinkedList<Position>) ((MazeState) state).eatenCheeses.clone();
+
+		// Actual position of the cheeses that have not been eaten and its iterator
 		Set<Position> cheesesPosition = new HashSet<Position>();
 		cheesesPosition.addAll(this.maze.cheesePositions);
-		
-		LinkedList<Position> eatenCheesesPosition = (LinkedList<Position>)((MazeState)state).eatenCheeses.clone();
+		// Iterator<Position> iterator = cheesesPosition.iterator();
 
-		myPosition = ((MazeState)state).hamsterPosition;
-		
-		if(numberEatenCheeses != 3){
-		
-			while (numberEatenCheeses != 3) {
-				//We target the first cheese on the list
-				actualCheesePos = cheesesPosition.iterator().next();
+		 boolean enter = true;
 
-				//We keeping searching if the cheese has been eaten
-				while (eatenCheesesPosition.contains(actualCheesePos)){
-					actualCheesePos = cheesesPosition.iterator().next();
-				}
-				
-				//Distance from HamsterPosition/cheese to the next not eaten cheese
-				distanceToNextCheese = Math.abs(actualCheesePos.x - myPosition.x)
-									 + Math.abs(actualCheesePos.y - myPosition.y);
+		// while (numberEatenCheeses != 3 && enter) {
+		while (numberEatenCheeses != 3) {
+			// We target the first cheese on the list
+			// actualCheesePos = iterator.next();
+			//enter = false;
+			for (Position actualCheesePos : cheesesPosition) {
+				// We keeping searching if the cheese has been eaten
+				if (!eatenCheesesPosition.contains(actualCheesePos)) {
+					// Distance from HamsterPosition to the first cheese--> not eaten
+					distanceToNextCheese = Math.abs(actualCheesePos.x - hamsPosition.x)
+							+ Math.abs(actualCheesePos.y - hamsPosition.y);
+					// We check whether this cheese is the closest from the hamster Position
+					if (distanceToNextCheese < shortestDistance) {
 
-				//We check whether this cheese is the closest from the hamster Position
-				if (distanceToNextCheese < shortestDistance) {
-
-					shortestDistance = distanceToNextCheese;
-					closerCheesePos = actualCheesePos;
-				}
-
-				if (!eatenCheesesPosition.iterator().hasNext()) {
-					//We initialize the iterator so we cover all the elements of the Set for next steps
-					((MazeState)state).eatenCheeses.iterator();
-					//Updating the variables
-					numberEatenCheeses += 1;
-					eatenCheesesPosition.add(closerCheesePos);
-					myPosition = closerCheesePos;
-					heuristicValue = heuristicValue + shortestDistance;
+						shortestDistance = distanceToNextCheese;
+						closerCheesePos = actualCheesePos;
+					}
 				}
 			}
-			numberEatenCheeses = ((MazeState)state).cheeseCounter;
+
+			// Once it finishes the first iteration we have to cover the
+			// Updating the variables
+
+			eatenCheesesPosition.add(closerCheesePos);
+			numberEatenCheeses += 1;
+			hamsPosition = closerCheesePos;
+			heuristicValue = heuristicValue + shortestDistance;
+
 		}
+
+		// Distance from last cheese eaten to the exit
+		//If all cheeses have been eaten before call heuristics, it give us 
+		//the distance from  its position to the exit
+		//if ((numberEatenCheeses == 3)&&enter) {
+
+			if (shortestDistance >= INFINITY) {
+				hamsPosition = ((MazeState) state).hamsterPosition;
+				distanceToTheExit = Math.abs(this.maze.output().x - hamsPosition.x)
+						+ Math.abs(this.maze.output().y - hamsPosition.y);
+				heuristicValue = distanceToTheExit;
+			} else {
+				distanceToTheExit = Math.abs(this.maze.output().x - hamsPosition.x)
+						+ Math.abs(this.maze.output().y - hamsPosition.y);
+				heuristicValue = shortestDistance + distanceToTheExit;
+			}
+
 		
-		//Distance from last cheese eaten to the exit
-		if (numberEatenCheeses == 3) {
-					
-			distanceToTheExit = Math.abs(this.maze.output().x - myPosition.x)
-							  + Math.abs(this.maze.output().y - myPosition.y);
-			heuristicValue = shortestDistance + distanceToTheExit;
-		}
-		return heuristicValue;*/
+		return heuristicValue;
 	}
 
 	// VISUALIZATION

@@ -1,100 +1,104 @@
 package algorithms;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 import search.*;
 
-public class AStar extends SearchAlgorithm {
-
-	// TODO Auto-generated method stub
+public class BreathFirstImprove extends SearchAlgorithm{
+	
 	@Override
 	public void setParams(String[] params) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void doSearch() {
-
+		// TODO Auto-generated method stub
 		State initialState = problem.initialState();
 		Node initialNode = new Node(initialState);
-
-		/*
-		 * We will order the nodes to explored depending on its evaluation. The smaller
-		 * evaluation value, the earlier this node will be explored.
-		 */
-		PriorityQueue<Node> openNodes = new PriorityQueue<Node>(search.Node.BY_EVALUATION);
+		
+		Queue<Node> openNodes = new LinkedList<Node>();
+		
 		LinkedList<State> exploredStates = new LinkedList<State>();
 
-		// We include the first Node
+		
+		//we include the first Node
 		openNodes.add(initialNode);
 		generatedNodes++;
-
-		/*
-		 * We keep searching till finding a solution or till exploring all the possible
-		 * paths.
-		 */
-		while ((openNodes.peek() != null) && !solutionFound) {
-
-			// We extract the first Node in the queue
+		
+		//We keep searching till finding a solution or till exploring all
+		//the possible paths.
+		while((openNodes.peek() != null)&& !solutionFound){
+			//We extract the first Node in the queue
+			
 			Node actualNode = openNodes.poll();
+			
 			System.out.print("\n");
 			System.out.print("\n****************************************************");
 			System.out.print("\nNEW NODE: " + actualNode );
 			System.out.print("\n	-------------------------------------------- ");
 
-			State actualNodeState = (State) actualNode.getState();
-
-			// It will be explored if the State has not been explored before
-			if (!exploredStates.contains(actualNodeState)) {
-				// We explore the Node
-
-				// First we check if it is the Goal State
-				if (problem.testGoal(actualNode.getState())) {
-					
+			//System.out.println("ha pasado el poll"+ actualNode.hashCode()+actualNode.getState());
+			State actualNodeState = (State)actualNode.getState();
+			//It will be explored if the State has not been explored before
+			//if (!exploredStates.contains(actualNode.getState())){
+			if (!exploredStates.contains(actualNodeState)){
+				//We explore the Node
+				
+				//First we check if it is the Goal State
+				if(problem.testGoal(actualNode.getState())){
 					actionSequence.addAll(recoverPath(actualNode));
 					solutionFound = true;
-					
-				} else {
-					
-					// If is not the goal we expand the Node
+				}else{
+					//If is not the goal we expand the Node
+					//openNodes.addAll(getSuccessors(actualNode));
 					Queue<Node> successorNodes = new LinkedList<Node>();
 					successorNodes.addAll(getSuccessors(actualNode));
-
-					System.out.print("\nSUCCESORS OF THE NODE:");
-					for (Node n : successorNodes) {
-						openNodes.add(n);
-						System.out.print("\n	Node: " + n.toString());
-						System.out.print("\n	Heuristica del nodo: " + n.getHeuristic());
-						System.out.print("\n	Evaluacion del nodo: " + n.getEvaluation());
-						System.out.print("\n	-------------------------------------------- ");
+					
+					for (Node n: successorNodes) {
+						if  (!exploredStates.contains(n.getState())) {
+							if (!openNodes.contains(n)) {
+								openNodes.add(n);
+								System.out.print("\n	Node: " + n.toString());
+								System.out.print("\n	Heuristica del nodo: " + n.getHeuristic());
+								System.out.print("\n	Evaluacion del nodo: " + n.getEvaluation());
+								System.out.print("\n	-------------------------------------------- ");
+							
+							}else {
+								System.out.print("\n	** We DONT add a node, it is an open node:"+n);
+								System.out.print("\n	-------------------------------------------- ");
+							}
+							
+						} else {
+							System.out.print("\n	** We DONT add a node, it is an explored node:"+n);
+							System.out.print("\n	-------------------------------------------- ");
+						}
 					}
-
 					System.out.print("\n****************************************************");
 					//We check for the max size of the set of openNodes
 					long temporalmax = openNodes.size();
 					if (temporalmax > openMaxSize)
 						openMaxSize = temporalmax;
+					
 				}
-				// We finish exploring the node, so we include it into
-				// the explored States
+				//We finish exploring the node, so we include it into
+				//the explored States
 				// and we check for the max size of the set of exploredNodes
 				exploredStates.add(actualNode.getState());
 				long temporalmax = exploredStates.size();
 				if (temporalmax > exploredMaxSize)
 					exploredMaxSize = temporalmax;
-
-			} else {
+				System.out.print("\nNumero de explored size: "+ exploredMaxSize);
+				System.out.print("\n**********************************************************\n");
+				
+				
+			}else {
 				System.out.print("\n----------------------------------------------------");
 				System.out.print("\n--------This node has been already explored---------");
 				System.out.print("\n----------------------------------------------------\n");
-			}
 		}
-
+		}
+		
 		if (solutionFound) {
 
 			System.out.print("\n****************************************************");
@@ -131,17 +135,17 @@ public class AStar extends SearchAlgorithm {
 	}
 	/**Method that it return the path follow from the root, or the beginning of the path follow by a Node.
 	 * It saves in a List the sequence of parents giving a Node*/
-	public ArrayList<Action> recoverPath(Node node) {
+	public ArrayList<Action> recoverPath(Node node){
 		ArrayList<Action> path = new ArrayList<Action>();
-		while (!node.getState().equals(problem.initialState())) {
+		while (!node.getState().equals(problem.initialState())){
 			path.add(node.getAction());
 			totalCost = node.getCost() + totalCost;
 			node = node.getParent();
 		}
 		Collections.reverse(path);
-
+		
 		return path;
-
 	}
+	
 
 }
